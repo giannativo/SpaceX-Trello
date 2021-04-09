@@ -14,6 +14,7 @@ virtualenv name_of_env
 \path\to\env\Scripts\activate
 
 3. Initialize app
-Go to 'SPACEX-Trello' directory and run 'pip freeze -r requirements.txt' to install dependencies
-Create 'settings.py' file and add your Trello api key and token
-uvicorn main:app --reload
+- Go to 'SPACEX-Trello' directory and run 'pip freeze -r requirements.txt' to install dependencies
+- Create 'settings.py' file and add your Trello api key, token, and the id of the board and list to add the tasks
+- To run the app: uvicorn main:app --reload
+- To run the tests: pytest tests.py

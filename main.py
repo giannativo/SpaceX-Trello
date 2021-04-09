@@ -21,7 +21,7 @@ class Task(BaseModel):
     category: Optional[str] = None
 
 
-@app.post("/")
+@app.post('/')
 def create_task(task: Task):
     if task.type == 'issue':
         return create_issue_card(task)
@@ -29,28 +29,28 @@ def create_task(task: Task):
         return create_bug_card(task)
     if task.type == 'task':
         return create_task_card(task)
-    raise HTTPException(status_code=400, detail="The task type is not valid or is missing")
+    raise HTTPException(status_code=400, detail='The task type is not valid or is missing')
 
 
 def create_issue_card(task):
     if task.title and task.description:
         return add_card_to_list(task)
-    raise HTTPException(status_code=400, detail="The issue should have a title and a description")
+    raise HTTPException(status_code=400, detail='The issue should have a title and a description')
 
 
 def create_bug_card(task):
     if not task.description:
-        raise HTTPException(status_code=400, detail="The bug should have a description")
+        raise HTTPException(status_code=400, detail='The bug should have a description')
     task.title = get_bug_title()
     members_list = get_board_members()
-    member_id = get_random_board_member_id(members_list)
+    random_board_member_id = choice(members_list)['id']
     label_id = get_or_create_label(task.type)['id']
-    return add_card_to_list(task, member_id, label_id)
+    return add_card_to_list(task, random_board_member_id, label_id)
 
 
 def create_task_card(task):
     if not task.title or not task.category:
-        raise HTTPException(status_code=400, detail="The task should have a title and a category")
+        raise HTTPException(status_code=400, detail='The task should have a title and a category')
     label_id = get_or_create_label(task.category)['id']
     return add_card_to_list(task, label_id=label_id)
 
@@ -69,14 +69,10 @@ def get_or_create_label(name):
     return create_board_label(name)
 
 
-def get_random_board_member_id(members_list):
-    return choice(members_list)['id']
-
-
 def get_board_members():
-    url = "https://api.trello.com/1/boards/" + ID_BOARD + "/members"
+    url = 'https://api.trello.com/1/boards/' + ID_BOARD + '/members'
     response = requests.request(
-        "GET",
+        'GET',
         url,
         params={
             'key': KEY,
@@ -87,9 +83,9 @@ def get_board_members():
 
 
 def get_board_labels():
-    url = "https://api.trello.com/1/boards/" + ID_BOARD + "/labels"
+    url = 'https://api.trello.com/1/boards/' + ID_BOARD + '/labels'
     response = requests.request(
-        "GET",
+        'GET',
         url,
         params={
             'key': KEY,
@@ -100,9 +96,9 @@ def get_board_labels():
 
 
 def create_board_label(name):
-    url = "https://api.trello.com/1/boards/" + ID_BOARD + "/labels"
+    url = 'https://api.trello.com/1/boards/' + ID_BOARD + '/labels'
     response = requests.request(
-        "POST",
+        'POST',
         url,
         params={
             'key': KEY,
@@ -115,9 +111,9 @@ def create_board_label(name):
 
 
 def add_card_to_list(task, member_id=None, label_id=None):
-    url = "https://api.trello.com/1/cards/"
+    url = 'https://api.trello.com/1/cards/'
     response = requests.request(
-        "POST",
+        'POST',
         url,
         params={
             'key': KEY,
